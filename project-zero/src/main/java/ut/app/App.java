@@ -1,13 +1,12 @@
 package ut.app;
 
-/**
- * Hello world!
- *
- */
+import util.Date;
+
 public class App 
 {
     public static void main( String[] args )
     {
-        System.out.println( "Hello World!" );
+        Date date = new Date(18, 11, 1402);
+        System.out.println(date.nextDay());
     }
 }
