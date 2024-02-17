@@ -31,6 +31,11 @@ public class Membership
         return this.end;
     }
 
+    public String getTeamName()
+    {
+        return this.teamName;
+    }
+
     public String toString()
     {
         return this.teamName + '/' + this.start + '-' + this.end;
