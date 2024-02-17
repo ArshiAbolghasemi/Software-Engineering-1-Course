@@ -73,4 +73,19 @@ public class Date  {
         int r = year % 33;
         return (r == 1 || r == 5 || r == 9 || r == 13 || r ==17 || r== 22 || r == 26 || r == 30);
     }
+
+    public int getDay()
+    {
+        return this.day;
+    }
+
+    public int getMonth()
+    {
+        return this.month;
+    }
+
+    public int getYear()
+    {
+        return this.year;
+    }
 }
