@@ -20,4 +20,9 @@ public class Membership
         this.start = start;
         this.end = end;
     }
+
+    public boolean hasOverlapWithMembershipInterval(Date start, Date end)
+    {
+        return (this.start.compareTo(end) <= 0 && this.end.compareTo(start) >= 0);
+    }
 }
