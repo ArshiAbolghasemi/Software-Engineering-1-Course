@@ -21,6 +21,16 @@ public class Membership
         this.end = end;
     }
 
+    public Date getStart()
+    {
+        return this.start;
+    }
+
+    public Date getEnd()
+    {
+        return this.end;
+    }
+
     public String toString()
     {
         return this.teamName + '/' + this.start + '-' + this.end;
