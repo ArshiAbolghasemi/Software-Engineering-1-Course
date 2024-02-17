@@ -46,5 +46,12 @@ public class Player
 
         this.memberships.add(_membership);
     }
+
+    public int getMembershipsDayCount(String teamName)
+    {
+        return this.memberships.stream()
+            .filter(Membership -> Membership.getTeamName().equals(teamName))
+            .reduce(0, (carry, membership2) -> carry + membership2.getMembershipDaysCount(), Integer::sum);
+    }
     
 }
