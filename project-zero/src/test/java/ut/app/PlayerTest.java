@@ -32,7 +32,6 @@ public class PlayerTest extends TestCase
 
     public void testMembershipWithOverLap()
     {
-    
         IllegalArgumentException exception = assertThrows(
             IllegalArgumentException.class, 
             () -> {
@@ -53,5 +52,31 @@ public class PlayerTest extends TestCase
         );
 
         assertEquals("member ship has overlap with others!", exception.getMessage());
+    }
+
+    public void testTeamMembershipCountDays()
+    {
+        Player player = new Player("test");
+
+        player.addMembership(new Membership(
+            "team1", 
+            new Date(10, 4, 1402), 
+            new Date(10, 6, 1402)
+        ));
+
+        player.addMembership(new Membership(
+            "team2", 
+            new Date(20, 6, 1402), 
+            new Date(20, 8, 1402)
+        ));
+
+        player.addMembership(new Membership(
+            "team1", 
+            new Date(10, 9, 1402), 
+            new Date(10, 11, 1402)
+        ));
+
+        assertEquals("Invalid team 1 membership days count", 
+            player.getMembershipsDayCount("team1"), 122);
     }
 }
