@@ -41,11 +41,19 @@
       <version>4.12</version>
       <scope>test</scope>
     </dependency>
+
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
       <version>5.8.1</version> <!-- or the latest version -->
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>com.opencsv</groupId>
+      <artifactId>opencsv</artifactId>
+      <version>5.8</version>
+    </dependency>
+
   </dependencies>
 </project>
