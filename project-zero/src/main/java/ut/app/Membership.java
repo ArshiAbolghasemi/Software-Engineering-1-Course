@@ -1,6 +1,6 @@
 package ut.app;
 
-import java.sql.Date;
+import util.Date;
 import java.util.function.Function;
 
 public class Membership
@@ -30,5 +30,17 @@ public class Membership
     public boolean hasOverlapWithMembershipInterval(Date start, Date end)
     {
         return (this.start.compareTo(end) <= 0 && this.end.compareTo(start) >= 0);
+    }
+
+    public int getMembershipDaysCount()
+    {
+        int membershipDaysCount = 0;
+        Date current = this.start;
+        while (current.compareTo(this.end) != 0) {
+            membershipDaysCount++;
+            current = current.nextDay();
+        }
+
+        return membershipDaysCount;
     }
 }
