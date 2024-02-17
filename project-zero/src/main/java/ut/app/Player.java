@@ -28,6 +28,11 @@ public class Player
         this.memberships = memberships;
     }
 
+    public String getName()
+    {
+        return this.name;
+    }
+
     public String toString()
     {
         return this.name + this.hashCode();
