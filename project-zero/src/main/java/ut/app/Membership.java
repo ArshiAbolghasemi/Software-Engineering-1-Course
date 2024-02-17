@@ -1,6 +1,7 @@
 package ut.app;
 
 import java.sql.Date;
+import java.util.function.Function;
 
 public class Membership
 {
@@ -19,6 +20,11 @@ public class Membership
         this.teamName = teamName;
         this.start = start;
         this.end = end;
+    }
+
+    public String toString()
+    {
+        return this.teamName + '/' + this.start + '-' + this.end;
     }
 
     public boolean hasOverlapWithMembershipInterval(Date start, Date end)
