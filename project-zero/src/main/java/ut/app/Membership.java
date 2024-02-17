@@ -13,7 +13,7 @@ public class Membership
 
     public Membership(String teamName, Date start, Date end)
     {
-        if (start.compareTo(end) < 0) {
+        if (teamName.isEmpty() || start.compareTo(end) < 0) {
             throw new IllegalArgumentException("Invalid member ship interval");
         }
 
