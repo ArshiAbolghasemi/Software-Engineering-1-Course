@@ -2,7 +2,9 @@ package util;
 
 import java.util.Objects;
 
-public class Date  {
+public class Date implements
+    Comparable<Date>
+{
     private final int day;
     private final int month;
     private final int year;
@@ -87,5 +89,16 @@ public class Date  {
     public int getYear()
     {
         return this.year;
+    }
+
+    public int compareTo(Date other)
+    {
+        if (Integer.compare(this.getYear(), other.getYear()) != 0) {
+            return Integer.compare(this.getYear(), other.getYear());
+        } else if (Integer.compare(this.getMonth(), other.getMonth()) != 0) {
+            return Integer.compare(this.getMonth(), other.getMonth());
+        } else {
+            return Integer.compare(this.getDay(), other.getDay());
+        }
     }
 }
