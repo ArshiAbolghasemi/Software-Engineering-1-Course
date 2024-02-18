@@ -93,7 +93,7 @@ public class App
     private static Optional<Player> foundPlayer(ArrayList<Player> players, String playerName)
     {
         return players.stream()
-        .filter(player -> player.getName().equals(playerName))
-        .findFirst();
+            .filter(player -> player.getName().equals(playerName))
+            .findFirst();
     }
 }
