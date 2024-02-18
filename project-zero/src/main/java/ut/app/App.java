@@ -29,19 +29,21 @@ public class App
         try {
             ArrayList<Player> players = readInputCsv();
 
-            Optional<Player> foundedPlayer = players.stream()
-                .filter(player -> player.getName().equals("Gholam"))
-                .findFirst();
+            String targetPlayerName = "Gholam";
+            String targetTeamName = "Golgohar";
+
+            Optional<Player> foundedPlayer = foundPlayer(players, targetPlayerName);
         
             if (foundedPlayer == null) {
-                System.out.println("Gholam was not found!");
+                System.out.printf("%s was not found!", targetPlayerName);
             }
 
-            Player gholam = foundedPlayer.get();
+            Player player = foundedPlayer.get();
             System.out.printf(
-                "Gholam playe %d days in %s", 
-                gholam.getMembershipsDayCount("Golgohar"),         // Optional<Player> player = players.stream()
-                "Golgohar"
+                "%s playe %d days in %s", 
+                targetPlayerName,
+                player.getMembershipsDayCount(targetTeamName),         
+                targetTeamName
             );
         } catch (Throwable exception) {
             exception.printStackTrace();
@@ -52,16 +54,13 @@ public class App
     {
         try (CSVReader reader = new CSVReader(new FileReader(INPUT_CSV_FILE_PATH))) {
             ArrayList<Player> players = new ArrayList<Player>();
-            String[] line;
-            while ((line = reader.readNext()) != null) {
-                if (line.length != VALID_COLUMN_COUNTS) {
+            String[] row;
+            while ((row = reader.readNext()) != null) {
+                if (row.length != VALID_COLUMN_COUNTS) {
                     throw new Exception("Invalid file column structure!");
                 }
-                
-                String[] row = line;
-                Optional<Player> foundedPlayer = players.stream()
-                        .filter(player -> player.getName().equals(row[PLAYER_NAME_COL]))
-                        .findFirst();
+
+                Optional<Player> foundedPlayer = foundPlayer(players, row[PLAYER_NAME_COL]);
 
                 Player player = foundedPlayer != null ? 
                     foundedPlayer.get() : new Player(row[PLAYER_NAME_COL]);
@@ -89,5 +88,12 @@ public class App
 
             return players;
         }
+    }
+
+    private static Optional<Player> foundPlayer(ArrayList<Player> players, String playerName)
+    {
+        return players.stream()
+        .filter(player -> player.getName().equals(playerName))
+        .findFirst();
     }
 }
