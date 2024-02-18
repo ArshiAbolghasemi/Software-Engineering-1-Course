@@ -19,9 +19,9 @@ public class App
     public static final int MEMBERSHIP_START_DATE_MONTH_COL = 3;
     public static final int MEMBERSHIP_START_DATE_YEAR_COL = 4;
 
-    public static final int MEMBERSHIP_END_DATE_DAY_COL = 2;
-    public static final int MEMBERSHIP_END_DATE_MONTH_COL = 3;
-    public static final int MEMBERSHIP_END_DATE_YEAR_COL = 4;
+    public static final int MEMBERSHIP_END_DATE_DAY_COL = 5;
+    public static final int MEMBERSHIP_END_DATE_MONTH_COL = 6;
+    public static final int MEMBERSHIP_END_DATE_YEAR_COL = 7;
 
 
     public static void main( String[] args )
@@ -36,17 +36,18 @@ public class App
 
             if (!foundedPlayer.isPresent()) {
                 System.out.printf("%s was not found!", targetPlayerName);
+                return;
             }
 
             Player player = foundedPlayer.get();
             System.out.printf(
-                "%s playe %d days in %s",
+                "%s player %d days in %s",
                 targetPlayerName,
                 player.getMembershipsDayCount(targetTeamName),
                 targetTeamName
             );
         } catch (Throwable exception) {
-            exception.printStackTrace();
+            System.out.print(exception.getMessage());
         }
     }
 
