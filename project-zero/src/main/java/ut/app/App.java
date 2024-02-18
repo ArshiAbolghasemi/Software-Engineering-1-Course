@@ -10,7 +10,7 @@ public class App
 {
 
     public static final int VALID_COLUMN_COUNTS = 8;
-    public static final String INPUT_CSV_FILE_PATH = "../data/input.csv";
+    public static final String INPUT_CSV_FILE_PATH = "/project-zero/data/input.csv";
 
     public static final int PLAYER_NAME_COL = 0;
     public static final int TEAM_NAME_COL = 1;
@@ -33,16 +33,16 @@ public class App
             String targetTeamName = "Golgohar";
 
             Optional<Player> foundedPlayer = foundPlayer(players, targetPlayerName);
-        
-            if (foundedPlayer == null) {
+
+            if (!foundedPlayer.isPresent()) {
                 System.out.printf("%s was not found!", targetPlayerName);
             }
 
             Player player = foundedPlayer.get();
             System.out.printf(
-                "%s playe %d days in %s", 
+                "%s playe %d days in %s",
                 targetPlayerName,
-                player.getMembershipsDayCount(targetTeamName),         
+                player.getMembershipsDayCount(targetTeamName),
                 targetTeamName
             );
         } catch (Throwable exception) {
@@ -52,7 +52,9 @@ public class App
 
     private static ArrayList<Player> readInputCsv() throws Exception
     {
-        try (CSVReader reader = new CSVReader(new FileReader(INPUT_CSV_FILE_PATH))) {
+        try (CSVReader reader =
+                     new CSVReader(new FileReader(System.getProperty("user.dir") + INPUT_CSV_FILE_PATH))
+        ) {
             ArrayList<Player> players = new ArrayList<Player>();
             String[] row;
             while ((row = reader.readNext()) != null) {
@@ -62,7 +64,7 @@ public class App
 
                 Optional<Player> foundedPlayer = foundPlayer(players, row[PLAYER_NAME_COL]);
 
-                Player player = foundedPlayer != null ? 
+                Player player = foundedPlayer.isPresent() ?
                     foundedPlayer.get() : new Player(row[PLAYER_NAME_COL]);
 
                 player.addMembership(
@@ -81,7 +83,7 @@ public class App
                     )
                 );
 
-                if (foundedPlayer != null) continue;
+                if (foundedPlayer.isPresent()) continue;
 
                 players.add(player);
             }
