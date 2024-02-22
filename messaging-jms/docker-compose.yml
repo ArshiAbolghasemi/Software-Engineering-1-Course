@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  ut-se-messagejms:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - activemq
+
+  activemq:
+    image: apache/activemq-artemis:latest
+    ports:
+      - "61616:61616"
+      - "8161:8161"
+    environment:
+      ACTIVEMQ_ADMIN_LOGIN: admin
+      ACTIVEMQ_ADMIN_PASSWORD: admin
