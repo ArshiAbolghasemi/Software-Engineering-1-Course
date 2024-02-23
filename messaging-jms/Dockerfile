@@ -9,6 +9,8 @@ RUN mvn package
 
 FROM openjdk:17-jdk-slim
 
+USER root
+
 WORKDIR /app
 
 COPY --from=build /app/target/messaging-jms-0.0.1-SNAPSHOT.jar ./app.jar
