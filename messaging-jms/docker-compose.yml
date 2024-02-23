@@ -1,12 +1,14 @@
 version: '3.8'
 
 services:
-  ut-se-messagejms:
+  ut-se-message-jms:
     build:
       context: .
       dockerfile: Dockerfile
     depends_on:
       - activemq
+    volumes:
+      - .:/app
 
   activemq:
     image: apache/activemq-artemis:latest

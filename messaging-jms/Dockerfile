@@ -7,12 +7,10 @@ COPY . .
 RUN mvn dependency:go-offline
 RUN mvn package
 
-ENV JAR_FILE=messaging-jms-0.0.1-SNAPSHOT.jar
-
 FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
-COPY --from=build /app/target/${JAR_FILE} .
+COPY --from=build /app/target/messaging-jms-0.0.1-SNAPSHOT.jar ./app.jar
 
-CMD ["java", "-jar", "${JAR_FILE}"]
+CMD ["java", "-jar", "app.jar"]
