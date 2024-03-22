@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -60,6 +61,7 @@ public class BrokerCreditTest {
         assertThat(result.trades().size()).isEqualTo(5);
         assertThat(remainder.getOrderId()).isEqualTo(11);
         assertThat(remainder.getQuantity()).isEqualTo(160);
+        assertThat(remainder.getPrice()).isEqualTo(15820);
         assertThat(remainder.getStatus()).isEqualTo(OrderStatus.QUEUED);
 
         assertThat(buyerBroker.getCredit()).isEqualTo(68_377_850L);
@@ -70,6 +72,28 @@ public class BrokerCreditTest {
 
         assertThat(buyerShareholder.getPositions().get(security)).isEqualTo(101_840);
         assertThat(sellerShareholder.getPositions().get(security)).isEqualTo(98_160);
+    }
+
+    @Test
+    void new_buy_order_matches_partially_with_seller_orders() {
+        Order newOrder = new Order(11, security, Side.BUY, 1000, 15810, buyerBroker,
+                buyerShareholder);
+
+        MatchResult result = matcher.execute(newOrder);
+        LinkedList<Trade> trades = result.trades();
+        assertThat(trades.size()).isEqualTo(3);
+        assertThat(trades.getLast().getQuantity()).isEqualTo(365);
+
+        Order remainder = result.remainder();
+        assertThat(remainder.getQuantity()).isEqualTo(0);
+        assertThat(remainder.getPrice()).isEqualTo(15810);
+        assertThat(remainder.getStatus()).isEqualTo(OrderStatus.NEW);
+
+        assertThat(buyerBroker.getCredit()).isEqualTo(84_193_500L);
+        assertThat(sellerBroker.getCredit()).isEqualTo(15_806_500L);
+
+        assertThat(buyerShareholder.getPositions().get(security)).isEqualTo(101_000);
+        assertThat(sellerShareholder.getPositions().get(security)).isEqualTo(99_000);
     }
 
 }
