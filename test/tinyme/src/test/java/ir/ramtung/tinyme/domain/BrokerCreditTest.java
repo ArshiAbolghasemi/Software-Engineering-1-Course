@@ -2,6 +2,7 @@ package ir.ramtung.tinyme.domain;
 
 import ir.ramtung.tinyme.domain.entity.*;
 import ir.ramtung.tinyme.domain.service.Matcher;
+import ir.ramtung.tinyme.messaging.request.DeleteOrderRq;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 
 @SpringBootTest
 @DirtiesContext
@@ -189,6 +191,15 @@ public class BrokerCreditTest {
 
         assertThat(buyerShareholder.getPositions().get(security)).isEqualTo(102_000);
         assertThat(sellerShareholder.getPositions().get(security)).isEqualTo(98_000);
+    }
+
+    @Test
+    void delete_order_buy() {
+        Order deleteOrder = new Order(5, security, Side.BUY, 1000, 15400, buyerBroker, buyerShareholder);
+        DeleteOrderRq deleteOrderRq = new DeleteOrderRq(1, deleteOrder.getSecurity().getIsin(),
+                deleteOrder.getSide(), deleteOrder.getOrderId());
+        assertThatNoException().isThrownBy(() -> deleteOrder.getSecurity().deleteOrder(deleteOrderRq));
+        assertThat(buyerBroker.getCredit()).isEqualTo(115_400_000L);
     }
 
 }
