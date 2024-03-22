@@ -3,12 +3,15 @@ package ir.ramtung.tinyme.domain;
 import ir.ramtung.tinyme.domain.entity.*;
 import ir.ramtung.tinyme.domain.service.Matcher;
 import ir.ramtung.tinyme.messaging.request.DeleteOrderRq;
+import ir.ramtung.tinyme.messaging.request.EnterOrderRq;
+import ir.ramtung.tinyme.messaging.request.OrderEntryType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -200,6 +203,27 @@ public class BrokerCreditTest {
                 deleteOrder.getSide(), deleteOrder.getOrderId());
         assertThatNoException().isThrownBy(() -> deleteOrder.getSecurity().deleteOrder(deleteOrderRq));
         assertThat(buyerBroker.getCredit()).isEqualTo(115_400_000L);
+    }
+
+    @Test
+    void update_order_quantity_without_lose_priority() {
+        Order toBeUpdateOrder = new Order(1, security, Side.BUY, 304, 15700, buyerBroker,
+                buyerShareholder);
+        EnterOrderRq enterOrderRq = EnterOrderRq.createUpdateOrderRq(
+                1,
+                toBeUpdateOrder.getSecurity().getIsin(),
+                toBeUpdateOrder.getOrderId(),
+                LocalDateTime.now(),
+                toBeUpdateOrder.getSide(),
+                toBeUpdateOrder.getQuantity() - 100,
+                toBeUpdateOrder.getPrice(),
+                toBeUpdateOrder.getBroker().getBrokerId(),
+                toBeUpdateOrder.getShareholder().getShareholderId(),
+                0
+        );
+
+        assertThatNoException().isThrownBy(() -> security.updateOrder(enterOrderRq, matcher));
+        assertThat(buyerBroker.getCredit()).isEqualTo(101_570_000L);
     }
 
 }
