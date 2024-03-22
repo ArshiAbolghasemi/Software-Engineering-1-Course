@@ -205,7 +205,7 @@ public class BrokerCreditTest {
     }
 
     @Test
-    void update_order_quantity_without_lose_priority() {
+    void update_order_buy_quantity_without_lose_priority() {
         Order toBeUpdateOrder = new Order(1, security, Side.BUY, 304, 15700, buyerBroker,
                 buyerShareholder);
         EnterOrderRq enterOrderRq = EnterOrderRq.createUpdateOrderRq(
