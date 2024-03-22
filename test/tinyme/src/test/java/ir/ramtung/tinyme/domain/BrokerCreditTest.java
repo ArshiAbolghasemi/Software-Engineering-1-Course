@@ -111,4 +111,28 @@ public class BrokerCreditTest {
         assertThat(sellerShareholder.getPositions().get(security)).isEqualTo(100_000);
     }
 
+    @Test
+    void new_order_not_enough_credit() {
+        buyerBroker.decreaseCreditBy(90_000_000L);
+        Order newOrder = new Order(11, security, Side.BUY, 1000, 15810, buyerBroker,
+                buyerShareholder);
+        MatchResult result = matcher.execute(newOrder);
+
+        assertThat(result.remainder()).isNull();
+        assertThat(result.trades()).isEmpty();
+        assertThat(result.outcome()).isEqualTo(MatchingOutcome.NOT_ENOUGH_CREDIT);
+
+        assertThat(buyerBroker.getCredit()).isEqualTo(10_000_000L);
+        assertThat(sellerBroker.getCredit()).isEqualTo(0);
+
+        Order firstSellOrder = orderBook.getSellQueue().get(0);
+        assertThat(firstSellOrder.getOrderId()).isEqualTo(6);
+        assertThat(firstSellOrder.getQuantity()).isEqualTo(350);
+
+        Order secondSellOrder = orderBook.getSellQueue().get(1);
+        assertThat(secondSellOrder.getOrderId()).isEqualTo(7);
+        assertThat(secondSellOrder.getQuantity()).isEqualTo(285);
+    }
+
+
 }
