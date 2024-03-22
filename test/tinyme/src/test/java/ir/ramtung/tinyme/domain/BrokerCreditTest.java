@@ -16,34 +16,60 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @DirtiesContext
 public class BrokerCreditTest {
-
     private Security security;
-    private Broker broker;
-    private Shareholder shareholder;
+    private Broker buyerBroker;
+    private Broker sellerBroker;
+    private Shareholder sellerShareholder;
+
+    private Shareholder buyerShareholder;
     private OrderBook orderBook;
-    private List<Order> orders;
     @Autowired
     private Matcher matcher;
 
     @BeforeEach
     void setupOrderBook() {
         security = Security.builder().build();
-        broker = Broker.builder().credit(100_000_000L).build();
-        shareholder = Shareholder.builder().build();
-        shareholder.incPosition(security, 100_000);
+        sellerBroker = Broker.builder().credit(0).build();
+        buyerBroker = Broker.builder().credit(100_000_000L).build();
+        sellerShareholder = Shareholder.builder().build();
+        sellerShareholder.incPosition(security, 100_000);
+        buyerShareholder = Shareholder.builder().build();
+        buyerShareholder.incPosition(security, 100_000);
         orderBook = security.getOrderBook();
-        orders = Arrays.asList(
-                new Order(1, security, Side.BUY, 304, 15700, broker, shareholder),
-                new Order(2, security, Side.BUY, 43, 15500, broker, shareholder),
-                new Order(3, security, Side.BUY, 445, 15450, broker, shareholder),
-                new Order(4, security, Side.BUY, 526, 15450, broker, shareholder),
-                new Order(5, security, Side.BUY, 1000, 15400, broker, shareholder),
-                new Order(6, security, Side.SELL, 350, 15800, broker, shareholder),
-                new Order(7, security, Side.SELL, 285, 15810, broker, shareholder),
-                new Order(8, security, Side.SELL, 800, 15810, broker, shareholder),
-                new Order(9, security, Side.SELL, 340, 15820, broker, shareholder),
-                new Order(10, security, Side.SELL, 65, 15820, broker, shareholder)
+        List<Order> orders = Arrays.asList(
+                new Order(1, security, Side.BUY, 304, 15700, buyerBroker, buyerShareholder),
+                new Order(2, security, Side.BUY, 43, 15500, buyerBroker, buyerShareholder),
+                new Order(3, security, Side.BUY, 445, 15450, buyerBroker, buyerShareholder),
+                new Order(4, security, Side.BUY, 526, 15450, buyerBroker, buyerShareholder),
+                new Order(5, security, Side.BUY, 1000, 15400, buyerBroker, buyerShareholder),
+                new Order(6, security, Side.SELL, 350, 15800, sellerBroker, sellerShareholder),
+                new Order(7, security, Side.SELL, 285, 15810, sellerBroker, sellerShareholder),
+                new Order(8, security, Side.SELL, 800, 15810, sellerBroker, sellerShareholder),
+                new Order(9, security, Side.SELL, 340, 15820, sellerBroker, sellerShareholder),
+                new Order(10, security, Side.SELL, 65, 15820, sellerBroker, sellerShareholder)
         );
         orders.forEach(order -> orderBook.enqueue(order));
     }
+
+    @Test
+    void new_buy_order_matches_with_entire_sell_queue_with_remain_quantity() {
+        Order newOrder = new Order(11, security, Side.BUY, 2000, 15820, buyerBroker,
+                buyerShareholder);
+        MatchResult result = matcher.execute(newOrder);
+        Order remainder = result.remainder();
+        assertThat(result.trades().size()).isEqualTo(5);
+        assertThat(remainder.getOrderId()).isEqualTo(11);
+        assertThat(remainder.getQuantity()).isEqualTo(160);
+        assertThat(remainder.getStatus()).isEqualTo(OrderStatus.QUEUED);
+
+        assertThat(buyerBroker.getCredit()).isEqualTo(68_377_850L);
+        assertThat(sellerBroker.getCredit()).isEqualTo(29_090_950L);
+
+        assertThat(security.getOrderBook().getBuyQueue()).contains(remainder);
+        assertThat(security.getOrderBook().getSellQueue()).isEmpty();
+
+        assertThat(buyerShareholder.getPositions().get(security)).isEqualTo(101_840);
+        assertThat(sellerShareholder.getPositions().get(security)).isEqualTo(98_160);
+    }
+
 }
