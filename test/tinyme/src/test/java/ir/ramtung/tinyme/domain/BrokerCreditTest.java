@@ -134,4 +134,25 @@ public class BrokerCreditTest {
         assertThat(secondSellOrder.getQuantity()).isEqualTo(285);
     }
 
+    @Test
+    void new_buy_order_matches_completely_with_sell_order_ice_berg_in_order_book() {
+        IcebergOrder icebergOrderSell = new IcebergOrder(11, security, Side.SELL, 65, 15820, sellerBroker, sellerShareholder,
+                50);
+
+        orderBook.enqueue(icebergOrderSell);
+
+        Order newBuyOrder = new Order(11, security, Side.BUY, 2000, 15820, buyerBroker,
+                buyerShareholder);
+
+        MatchResult result = matcher.execute(newBuyOrder);
+
+        Order remainder = result.remainder();
+        assertThat(result.trades().size()).isEqualTo(7);
+        assertThat(remainder.getQuantity()).isEqualTo(95);
+        assertThat(remainder.getPrice()).isEqualTo(15820);
+        assertThat(remainder.getStatus()).isEqualTo(OrderStatus.QUEUED);
+
+        assertThat(buyerBroker.getCredit()).isEqualTo(68_377_850L);
+        assertThat(sellerBroker.getCredit()).isEqualTo(30_119_250L);
+    }
 }
