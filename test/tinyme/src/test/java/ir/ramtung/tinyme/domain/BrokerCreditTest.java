@@ -96,4 +96,19 @@ public class BrokerCreditTest {
         assertThat(sellerShareholder.getPositions().get(security)).isEqualTo(99_000);
     }
 
+    @Test
+    void new_order_not_match_any_sell_order() {
+        Order newOrder = new Order(11, security, Side.BUY, 1000, 10_000, buyerBroker,
+                buyerShareholder);
+        MatchResult result = matcher.execute(newOrder);
+        assertThat(result.trades()).isEmpty();
+        assertThat(result.remainder()).isEqualTo(newOrder);
+
+        assertThat(buyerBroker.getCredit()).isEqualTo(90_000_000L);
+        assertThat(sellerBroker.getCredit()).isEqualTo(0);
+
+        assertThat(buyerShareholder.getPositions().get(security)).isEqualTo(100_000);
+        assertThat(sellerShareholder.getPositions().get(security)).isEqualTo(100_000);
+    }
+
 }
