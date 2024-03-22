@@ -97,7 +97,7 @@ public class BrokerCreditTest {
     }
 
     @Test
-    void new_order_not_match_any_sell_order() {
+    void new_buy_order_not_match_any_sell_order() {
         Order newOrder = new Order(11, security, Side.BUY, 1000, 10_000, buyerBroker,
                 buyerShareholder);
         MatchResult result = matcher.execute(newOrder);
@@ -112,7 +112,7 @@ public class BrokerCreditTest {
     }
 
     @Test
-    void new_order_not_enough_credit() {
+    void new_buy_order_not_enough_credit() {
         buyerBroker.decreaseCreditBy(90_000_000L);
         Order newOrder = new Order(11, security, Side.BUY, 1000, 15810, buyerBroker,
                 buyerShareholder);
@@ -133,6 +133,5 @@ public class BrokerCreditTest {
         assertThat(secondSellOrder.getOrderId()).isEqualTo(7);
         assertThat(secondSellOrder.getQuantity()).isEqualTo(285);
     }
-
 
 }
