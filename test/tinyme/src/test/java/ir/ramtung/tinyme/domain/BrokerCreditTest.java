@@ -174,4 +174,21 @@ public class BrokerCreditTest {
         assertThat(sellerShareholder.getPositions().get(security)).isEqualTo(97_682);
     }
 
+    @Test
+    void new_order_sell_match_partially_buy_order() {
+        Order newBuyOrder = new Order(11, security, Side.SELL, 2000, 15000, sellerBroker,
+                sellerShareholder);
+
+        MatchResult result = matcher.execute(newBuyOrder);
+        Order remainder = result.remainder();
+        assertThat(result.trades().size()).isEqualTo(5);
+        assertThat(remainder.getQuantity()).isEqualTo(0);
+        assertThat(remainder.getPrice()).isEqualTo(15000);
+
+        assertThat(sellerBroker.getCredit()).isEqualTo(30_944_050);
+
+        assertThat(buyerShareholder.getPositions().get(security)).isEqualTo(102_000);
+        assertThat(sellerShareholder.getPositions().get(security)).isEqualTo(98_000);
+    }
+
 }
