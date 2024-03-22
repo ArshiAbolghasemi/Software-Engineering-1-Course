@@ -141,7 +141,7 @@ public class BrokerCreditTest {
 
         orderBook.enqueue(icebergOrderSell);
 
-        Order newBuyOrder = new Order(11, security, Side.BUY, 2000, 15820, buyerBroker,
+        Order newBuyOrder = new Order(12, security, Side.BUY, 2000, 15820, buyerBroker,
                 buyerShareholder);
 
         MatchResult result = matcher.execute(newBuyOrder);
@@ -155,4 +155,5 @@ public class BrokerCreditTest {
         assertThat(buyerBroker.getCredit()).isEqualTo(68_377_850L);
         assertThat(sellerBroker.getCredit()).isEqualTo(30_119_250L);
     }
+
 }
